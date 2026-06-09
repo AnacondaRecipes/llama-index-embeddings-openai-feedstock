@@ -1,20 +1,22 @@
 {% set name = "llama-index-embeddings-openai" %}
-{% set version = "0.5.1" %}
+{% set version = "0.6.0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/llama_index_embeddings_openai-{{ version }}.tar.gz
-    sha256: 1c89867a48b0d0daa3d2d44f5e76b394b2b2ef9935932daf921b9e77939ccda8
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
+    sha256: eb3e6606be81cb89125073e23c97c0a6119dabb4827adbd14697c2029ad73f29
   # https://github.com/run-llama/llama_index/issues/10806
   - url: https://raw.githubusercontent.com/run-llama/llama_index/main/LICENSE
     sha256: 24f40b5190fdacabc24ddbb5f76364d15e4f030925220ea300d8a2dd4993c8cb
 
 build:
   number: 0
-  skip: true  # [py<310]
+  # llama-index-core doesn't support Python 3.14+ because of dataclasses-json, which is unmaintainable anymore,
+  # and does not support Python 3.14+ as well (https://github.com/lidatong/dataclasses-json/issues/568)
+  skip: true # [py<310 or py>313]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
@@ -36,7 +38,7 @@ test:
     - pip
 
 about:
-  home: https://llamaindex.ai
+  home: https://www.llamaindex.ai
   summary: llama-index embeddings openai integration
   description: |
     LlamaIndex embeddings integration with OpenAI. Provides the OpenAIEmbedding
@@ -45,7 +47,7 @@ about:
   license: MIT
   license_file: LICENSE
   license_family: MIT
-  doc_url: https://developers.llamaindex.ai/python/examples/embeddings/openai/
+  doc_url: https://developers.llamaindex.ai/python/framework/integrations/embeddings/openai/
   dev_url: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-openai
 
 extra:
